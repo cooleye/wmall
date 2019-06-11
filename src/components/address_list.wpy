@@ -113,10 +113,6 @@ export default class AddressList extends wepy.component {
       })
     }
   }
-
-  onLoad() {
-
-  }
 }
 
 </script>

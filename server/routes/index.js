@@ -1,8 +1,47 @@
 var express = require('express');
 var router = express.Router();
 var md5 = require('md5');
+var request = require('request');
+
+const APPID = "wxdfae9e6726fc843e"
+const SECRET = "bc903a970f4f4fef99d0b2061f2fc444"
 
 const API_SECRET_KEY = 'github.com/cooleye'
+
+var cartList = [{
+        goodsId: "1111",
+        goodsName: "food11111",
+        ischecked: true,
+        thumLogo: "http://sujiefs.com/upload/images/20180319/201803191442069389248.jpg",
+        goodsSkuValName: "goodsSkuValName",
+        type: 1,
+        price: 8,
+        num: 2,
+        priceSubtotal: 16
+    },
+    {
+        goodsId: "2222",
+        goodsName: "food2222",
+        ischecked: false,
+        thumLogo: "http://sujiefs.com/upload/images/20180322/201803221353348299896.jpg",
+        goodsSkuValName: "goodsSkuValName2",
+        type: 2,
+        price: 10,
+        num: 3,
+        priceSubtotal: 30
+    },
+    {
+        goodsId: "3333",
+        goodsName: "food3333",
+        ischecked: false,
+        thumLogo: "http://sujiefs.com/upload/images/20180321/201803211341067195861.jpg",
+        goodsSkuValName: "goodsSkuValName2",
+        type: 2,
+        price: 100,
+        num: 1,
+        priceSubtotal: 100
+    }
+];
 
 
 /* GET home page. */
@@ -46,7 +85,16 @@ router.get('/api/mall/childGoodsCatetoryList', function(req, res) {
 
 //用户的购物车商品列表
 router.get('/api/mall/goodsCart/list', function(req, res) {
-    res.send({ "msg": "Token验证错误", "code": "002", "totalPrice": 0, "list": [] });
+
+    var openid = req.query.openId;
+    let sign = req.query.sign;
+    let TIMESTAMP = req.query.time;
+    const SIGN = md5((TIMESTAMP + API_SECRET_KEY).toLowerCase())
+    console.log('openid:', openid);
+    console.log('sing:', sign);
+
+    res.send({ "msg": "success", "code": "0", "totalPrice": 16, "list": cartList });
+
 })
 
 //用户是否绑定手机号
@@ -93,5 +141,110 @@ router.get('/api/mall/goodsFavorite/add', function(req, res) {
 //查询我的订单
 router.get('/api/mall/goodsOrder/getMyOrderList', function(req, res) {
     res.send({ "result": "005", "reason": null, "code": 0, "page_total": 0, "pageSize": 10, "list": [], "totalCount": 0, "pageNum": 1 })
+})
+
+//获取openid
+router.get('/api/wechat/jscode2session', function(req, res) {
+    var jsCode = req.query.jsCode;
+    var nickName = req.query.nickName;
+
+    console.log('jsCode:', jsCode)
+    console.log('nickName:', nickName)
+
+    var url = 'https://api.weixin.qq.com/sns/jscode2session?appid=' + APPID + '&secret=' + SECRET + '&js_code=' + jsCode + '&grant_type=authorization_code';
+
+    request({
+        url: url,
+        method: "GET",
+        json: true,
+        headers: {
+            "content-type": "application/json",
+        }
+    }, function(error, response, body) {
+        console.log(body)
+        if (!error && response.statusCode == 200) {
+            res.send({ expires_in: body.expires_in, openid: body.openid });
+        }
+    });
+})
+
+//更新购物车数量
+router.get('/api/mall/goodsCart/updateNum', function(req, res) {
+
+        res.send({ code: 0 })
+
+    })
+    //购物车删除商品
+router.get('/api/mall/goodsCart/delete', function(req, res) {
+        res.send({ code: 0 })
+    })
+    //购物车全选
+router.get('/api/mall/goodsCart/checkAll', function(req, res) {
+    res.send({ code: 0 })
+})
+
+//商品选择状态
+router.get('/api/mall/goodsCart/check', function(req, res) {
+    res.send({ code: 0 })
+})
+
+router.get('/api/mall/goodsOrder/commitData', function(req, res) {
+
+    res.send({
+        goodsList: cartList,
+        totalPrice: 999,
+        actualPrice: 999,
+        hasDefaultAddress: false,
+        defaultAddress: "",
+        userScore: 100,
+        canUseScore: true,
+        deduScore: 0,
+        deduFee: 0,
+        jf_num: 10,
+        reduce_fee: 0.1
+    })
+
+})
+var addressList = [
+        { id: 0, receiverName: "张三", mobile: "11111111111", isDef: 1, provinceName: "北京市", cityName: "北京市", areaName: "海淀区", addressDetail: "北京大学东门" },
+        { id: 1, receiverName: "李四", mobile: "1111222222", isDef: 2, provinceName: "北京市", cityName: "北京市", areaName: "海淀区", addressDetail: "清华大学" }
+    ]
+    //收货地址
+router.get('/api/receiverInfo/list', function(req, res) {
+
+
+        res.send({ list: addressList, msg: "success", code: 0 })
+
+    })
+    //新增收货地址
+router.get('/api/receiverInfo/saveOrUpdate', function(req, res) {
+    var openId = req.query.openId;
+    var address = req.query.address;
+    var isDef = req.query.isDef;
+    var province = req.query.province;
+    var city = req.query.city;
+    var area = req.query.area;
+    addressList.push({ id: 2, receiverName: address.receiverName, mobile: address.mobile, isDef: isDef, provinceName: province, cityName: city, areaName: area, addressDetail: address.addressDetail })
+
+    res.send({ msg: "success", code: 0 })
+
+})
+
+//查询收货地址详情
+router.get("/api/receiverInfo/receiverInfoById", function(req, res) {
+    var id = req.query.id;
+    var info = addressList.filter(addr => addr.id == id)
+    res.send({ receiverInfo: info[0], code: 0, msg: "success" })
+})
+
+//支付前生成订单
+router.get('/api/mall/goodsOrder/saveByCart', function(req, res) {
+    var openId = req.query.openId;
+    var receiverInfoId = req.query.receiverInfoId;
+    var businessMessage = req.query.businessMessage;
+    var formId = req.query.formId;
+    var reduceScore = req.query.reduceScore;
+
+    res.send({ msg: "success", code: 0, tradeNo: 123 })
 })
 module.exports = router;

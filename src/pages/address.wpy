@@ -60,6 +60,7 @@ export default class Address extends wepy.page {
         id: id
       }
     });
+    console.log('receiverInf::::::::',json)
     if (json.data.code == 0) {
       this.receiverInfo=json.data.receiverInfo;
       this.$invoke("addressEdit","refresh", this.receiverInfo);
@@ -87,9 +88,7 @@ export default class Address extends wepy.page {
     let that = this;
     this.getUserAddress();
   }
-  computed = {
 
-  }
   methods = {
     getCurrentPage(cur,id) {
       this.currentPage = cur;
@@ -98,13 +97,7 @@ export default class Address extends wepy.page {
       }
     }
   }
-  onUnload() {
-    // if (this.currentPage !== 0) {
-    //   wx.navigateTo({
-    //     url: "/pages/address"
-    //   })
-    // }
-  }
+
   events = {
       refreshAddList(msg){
           this.getUserAddress();

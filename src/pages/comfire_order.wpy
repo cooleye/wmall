@@ -418,9 +418,7 @@ export default class ComfireOrder extends wepy.page {
       }
       if (this.can_use_score != num && num !=0  ) {
         this.jf_num = this.can_use_score;
-      }/* else if(parseInt(this.jf_num)%this.deduScore) {
-        this.jf_num = Math.floor(parseInt(this.jf_num)/this.deduScore)*this.deduScore;
-      }*/ else {
+      } else {
         this.jf_num = num;
       }
       let beishu = this.jf_num/this.deduScore;
@@ -430,9 +428,6 @@ export default class ComfireOrder extends wepy.page {
         value: this.jf_num
       };
     }
-  }
-  events = {
-
   }
 }
 

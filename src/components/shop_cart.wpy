@@ -3,7 +3,6 @@
     <repeat for="{{list}}" key="index" index="index" item="item">
       <view class="list_box">
         <swipeDelete :swipeData="item" @delItem.user="handleDelItem">
-          <!-- <view class="a-goods-conts {{item.ischecked? 'active':''}}"  > -->
           <view class="goods-info">
             <icon class="icon_check" type="success" color="{{item.ischecked?'red':'rgb(153,153,153)'}}" @tap.stop="selectTap" data-index="{{index}}" data-id="{{item.id}}" size="20" />
             <view class="img-box">
@@ -67,7 +66,8 @@
       swipeDelete
     }
     data = {
-      list: [],
+      list: [
+      ],
       noSelect: false,
       saveHidden: true,
       totalPrice: 0,
@@ -84,6 +84,9 @@
           openId: openId
         }
       });
+
+      console.log('1111111111car lsit:',json)
+ 
       if (json.data.code == 0) {
         let data = json.data;
         this.list = data.list;
@@ -102,9 +105,8 @@
     onLoad() {
       let that = this;
       this.operating = false;
-      //that.list = bb.result.products;
-      //console.log(bb.result.products)
-      //that.getCartList();
+      that.getCartList();
+    
     }
     computed = {}
     async checkGoods(id, index, ischecked) {
@@ -142,6 +144,7 @@
       if (json.data.code == 0) {
         // 购物车数据
         this.list[index].num = num;
+
         this.totalPrice = this.totalPrice - this.list[index].price;
         this.operating = false;
       } else {
@@ -239,7 +242,6 @@
         this.checkGoods(id, index, ischecked);
       },
       selectAll() {
-        console.log("sele....");
         this.checkAllGoods();
       },
       getCartListMethod() {

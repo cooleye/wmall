@@ -207,8 +207,7 @@ export default class goodsDetail extends wepy.page {
       }
 
 
-    ],
-    commentList1: [],
+    ]
   }
 
   components = {
@@ -475,11 +474,6 @@ export default class goodsDetail extends wepy.page {
       wepy.switchTab({
         url: '/pages/home'
       })
-      // wx.switchTab({
-      //   url: '/pages/home'
-      // })
-      // console.log(wepy)
-      // console.log(wx)
     },
     moreComment() {
       wepy.navigateTo({

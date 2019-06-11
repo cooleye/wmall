@@ -22,14 +22,18 @@ export default class Authorize extends wepy.page {
   }
   async onLoad() { 
     let res = await wepy.getSetting()
+    // console.log(res)
     if ((res.authSetting)['scope.userInfo']) {
       let userInfo = wepy.getStorageSync(USER_INFO)
-      if (!userInfo.nickName) {
+      // console.log('userInfo:',userInfo)
+      // if (!userInfo.nickName) {
+      if (true) {
         let data  = await wepy.getUserInfo()
         if (data) {
           wepy.setStorageSync(USER_INFO, data.userInfo)
         }
         let res = await wepy.login()
+        // console.log('------login:',res)
         if (res.code) {
           let systemInfo = wepy.getSystemInfoSync();
           wepy.setStorageSync(SYSTEM_INFO, systemInfo);
@@ -39,10 +43,11 @@ export default class Authorize extends wepy.page {
               nickName: data.userInfo.nickName
             }
           })
-          if (rlt.data.result) {
+          console.log('rlt',rlt)
+          if (rlt.data) {
             let data = rlt.data;
-            if (data.data.openid) {
-              wepy.setStorageSync(USER_SPECICAL_INFO, data.data);
+            if (data.openid) {
+              wepy.setStorageSync(USER_SPECICAL_INFO, data);
             }
           }
         }
