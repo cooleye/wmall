@@ -7,7 +7,7 @@
             <navigator class="item" open-type="navigate" wx:for="{{list}}" wx:key="item" url="/pages/home_detail?code={{item.code}}" >
                 <image class="discover_img" src="{{item.logo}}"></image>
                 <view class="info" wx:for="{{item.attrs}}" wx:key="item">
-                    <view>{{item.attrName.attrName}}：</view><view wx:for="{{item.attrValList}}" wx:key="item">{{item.attrVal}} </view>
+                    <view>{{item.attrName}}：</view><view >{{item.attrVal}} </view>
                 </view>
         </view>
         </navigator>
@@ -24,19 +24,10 @@ export default class Discover extends wepy.component {
         list: []
     }
 
-    data = {
-
-    }
-    onLoad() {
-        let that = this;
-        console.log(this.list)
-    }
-    getList() {
-        console.log("调用getList方法6666666")
-    }
-    computed = {
-
-    }
+    data = {}
+    onLoad() {}
+    getList() {}
+    computed = {}
     methods = {}
 
 }

@@ -11,30 +11,30 @@
     <!-- 搜索模块 -->
     <view class="pos">
       <view class="search_read_only">
-        <navigator class="search_content" open-type="navigate" url="/pages/search">
+        <navigator class="search_content" open-type="navigate" url="/#">
           <i class="iconfont icon-search"></i>
           <view class="search_input">搜索商品</view>
         </navigator>
-        <navigator class="message" url="/pages/messages">
+        <navigator class="message" url="/#">
           <i class="iconfont icon-message cfff"></i>
           <view class="doc cfff">消息</view>
         </navigator>
       </view>
     </view>
     <view class="nav_list">
-      <navigator open-type="navigate" url="/pages/sign_in">
+      <navigator open-type="navigate" url="/#">
         <image src="../images/icon_nav_01_new.png" class="nav_icon"></image>
         <view class="nav_text">签到有礼</view>
       </navigator>
-      <navigator open-type="navigate" url="/pages/exchange_goods">
+      <navigator open-type="navigate" url="/#">
         <image src="../images/icon_nav_02_new.png" class="nav_icon"></image>
         <view class="nav_text">换货专区</view>
       </navigator>
-      <navigator open-type="navigate" url="/pages/wholesale">
+      <navigator open-type="navigate" url="/#">
         <image src="../images/icon_nav_03_new.png" class="nav_icon"></image>
         <view class="nav_text">特价专区</view>
       </navigator>
-      <navigator open-type="navigate" url="/pages/replenishment_goods">
+      <navigator open-type="navigate" url="/#">
         <image src="../images/icon_nav_04_new.png" class="nav_icon"></image>
         <view class="nav_text">我要补货</view>
       </navigator>
@@ -117,10 +117,11 @@ export default class Home extends wepy.page {
     const json = await api.getAdList({
       query: {}
     });
+  
     if (json.data.code == 0) {
       this.adList = json.data.list;
       this.$apply();
-    } else {}
+    }
   }
   onLoad() {
     let that = this;

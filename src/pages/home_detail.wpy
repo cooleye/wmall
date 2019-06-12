@@ -7,7 +7,7 @@
     <view class="info">
       <view class="title">{{cate.name}}</view>
       <view wx:for="{{cate.attrs}}" wx:key="item">
-        <view class="doc"><i class="lx">◆</i> {{item.attrName.attrName}}：<view wx:for="{{item.attrValList}}" wx:key="item">{{item.attrVal}} </view></view>
+        <view class="doc"><i class="lx">◆</i> {{item.attrName}}：<view>{{item.attrVal}} </view></view>
       </view>
     </view>
   </view>
@@ -62,7 +62,6 @@ export default class HomeDetail extends wepy.page {
 
   async getGoodList(currentPage, size) {
     let that = this;
-    //const json = await api.getGoodsList({
     const json = await api.hostGoodsList({
       query: {
         page: currentPage || 1,
@@ -108,9 +107,7 @@ export default class HomeDetail extends wepy.page {
     //this.$apply();
     this.getGoodList();
   }
-  computed = {
 
-  }
   methods = {
     currentType(obj) {
       //tip.success("状态:" + obj);
@@ -137,7 +134,7 @@ export default class HomeDetail extends wepy.page {
     onShareAppMessage: function (res) {
       if (res.from === 'button') {
         // 来自页面内转发按钮
-        console.log(res.target)
+        // console.log(res.target)
       }
       return {
         title: this.cate.name,
@@ -152,9 +149,6 @@ export default class HomeDetail extends wepy.page {
     }
   }
 
-  events = {
-
-  }
   //加载更多
   onReachBottom() {
     let that = this;

@@ -16,10 +16,6 @@
         <view class="order_time {{purchasetype==2||special==1?'hidden':''}}">
           <timer :startTime.sync="startTime" :endTime.sync="endTime"></timer>
         </view>
-<!--         <view class="share-box">
-          <i class="iconfont icon-share"></i>
-          <text>分享</text>
-        </view> -->
       </view>
       <view class="baoyou">满{{detail.freeShipNum}}件包邮</view>
     </view>
@@ -92,7 +88,6 @@
           <i class="iconfont icon-home"></i>
           <view class="doc">首页</view>
         </view>
-        <!-- <contact-button class="contact"> -->
         <contact-button class="contact">
         </contact-button>
         <view class="item">
@@ -239,11 +234,9 @@ export default class goodsDetail extends wepy.page {
       this.special = option.special;
     }
     that.getGoodsDetail();
-    that.addUserBrowser();
     console.log("special===" + this.special);
   }
   onShow() {
-    this.goodsIsFavorite();
     //创建动画
     var animation = wx.createAnimation({
       transformOrigin: "50% 50%",
@@ -253,7 +246,7 @@ export default class goodsDetail extends wepy.page {
     })
     this.animation = animation;
   }
-  wxParseImgLoad(e) {}
+  // wxParseImgLoad(e) {}
 
   wxParseImgTap(e) {
     var that = this
@@ -267,16 +260,8 @@ export default class goodsDetail extends wepy.page {
       })
     }
   }
-  /*onReachBottom() {
-    let that = this;
-    if (that.good_bigimg.length == 0) {
-      that.good_bigimg = that.detail.good_bigimg;
-      that.$apply();
-    }
-  }*/
   async getGoodsDetail() {
     let that = this;
-    //const json = await api.getGoodsDetail({
     const json = await api.goodsDetail({
       query: {
         id: that.goodsId
@@ -305,19 +290,6 @@ export default class goodsDetail extends wepy.page {
     that.$apply();
     this.$invoke('timer', 'initTimer', time);
   }
-  async addUserBrowser() {
-    let that = this;
-    let userSpecialInfo = wepy.getStorageSync(USER_SPECICAL_INFO) || {};
-    let openId = userSpecialInfo.openid;
-    const json = await api.addBrowser({
-      query: {
-        goodsId: that.goodsId,
-        openId: openId
-      }
-    });
-  }
-  computed = {}
-  events = {}
   //加入购物车
   async doTakeCart() {
     let that = this;
@@ -398,76 +370,7 @@ export default class goodsDetail extends wepy.page {
       this.$apply();
     }, 100)
   }
-  //查看商品收藏状态
-  async goodsIsFavorite() {
-    let that = this;
-    let userSpecialInfo = wepy.getStorageSync(USER_SPECICAL_INFO) || {};
-    let openId = userSpecialInfo.openid;
-    const json = await api.goodsIsFavorite({
-      query: {
-        openId: openId,
-        goodsId: that.goodsId
-      }
-    });
-    if (json.data.code == 0) {
-      if (json.data.isFavorite == 1) {
-        this.isFavorite = true;
-        console.log(this.isFavorite);
-      } else {
-        this.isFavorite = false;
-      }
-    } else {
-      console.log('查看商品收藏失败')
-      if (json.data.msg) {
-        tip.error(json.data.msg)
-      } else {
-        tip.error('查看商品收藏失败')
-      }
-    }
-    that.$apply();
-  }
-  //商品收藏
-  async goodsFavorite() {
-    let that = this;
-    let userSpecialInfo = wepy.getStorageSync(USER_SPECICAL_INFO) || {};
-    let openId = userSpecialInfo.openid;
-    const json = await api.goodsFavorite({
-      query: {
-        openId: openId,
-        goodsId: that.goodsId
-      }
-    });
-    if (json.data.code == 0) {
-      console.log("===========商品收藏成功=========")
-      this.isFavorite = true;
-      tip.toast("收藏成功");
-    } else {
-      console.log(json.data)
-      tip.error('收藏失败')
-    }
-    that.$apply();
-  }
-  //商品取消收藏
-  async goodsUnFavorite() {
-    let that = this;
-    let userSpecialInfo = wepy.getStorageSync(USER_SPECICAL_INFO) || {};
-    let openId = userSpecialInfo.openid;
-    const json = await api.goodsUnFavorite({
-      query: {
-        openId: openId,
-        goodsId: that.goodsId
-      }
-    });
-    if (json.data.code == 0) {
-      console.log("===========商品取消收藏成功=========")
-      tip.toast("取消收藏成功");
-      this.isFavorite = false;
-    } else {
-      console.log(json.data)
-      tip.error('取消收藏失败')
-    }
-    that.$apply();
-  }
+ 
   methods = {
     // issus : https://mp.weixin.qq.com/debug/wxadoc/dev/api/ui-navigate.html#wxrelaunchobject
     homePage() {
@@ -501,7 +404,6 @@ export default class goodsDetail extends wepy.page {
       }
       this.showConfirmData();
       this.orderType = 2;
-      //this.doTakeOrder();
     },
     takeCart() {
       if (!this.canOrder) {
@@ -509,13 +411,15 @@ export default class goodsDetail extends wepy.page {
       }
       this.showConfirmData();
       this.orderType = 1;
-      //this.doTakeCart();
     },
     takeFavorite() {
+     
       if (this.isFavorite == true) {
-        this.goodsUnFavorite();
+        this.isFavorite = false;
+         tip.toast("取消收藏");
       } else {
-        this.goodsFavorite();
+        this.isFavorite = true;
+         tip.toast("收藏成功");
       }
     },
     closeModel() {

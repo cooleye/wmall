@@ -162,7 +162,7 @@ export default class ComfireOrder extends wepy.page {
       this.is_exit_address = true;
       this.address=json.data.receiverInfo;
     } else {
-      tip.error(json.data.msg)
+      // tip.error(json.data.msg)
     }
   }
 
@@ -193,7 +193,7 @@ export default class ComfireOrder extends wepy.page {
 
   async goToPay(formId) {
     //测试调用接口用，可注释
-    tip.loading("提交订单中");
+    // tip.loading("提交订单中");
     let userSpecialInfo = wepy.getStorageSync(USER_SPECICAL_INFO) || {};
     let openId = userSpecialInfo.openid;
     const json = await api.saveByCart({
@@ -209,9 +209,9 @@ export default class ComfireOrder extends wepy.page {
     if (json.data.code == 0) {
       //补货直接提交到后台去审核
       if (this.purchaseType==2) {//补货
-        tip.success("已提交补货申请!");
+        // tip.success("已提交补货申请!");
         setTimeout(() => {
-          tip.loaded();
+          // tip.loaded();
           wepy.navigateTo({
             url: "/pages/reorder"
           })
@@ -238,17 +238,17 @@ export default class ComfireOrder extends wepy.page {
             console.log('pay', res)
             setTimeout(() => {
               //支付成功 关闭loadding 跳转到支付成功页面
-              tip.loaded();
+              // tip.loaded();
               wepy.navigateTo({
                 url: "/pages/pay_success?orderNo="+json.data.tradeNo
               })
             }, 2000)
           },
           fail: function (res) {
-            tip.alert('支付失败');
+            // tip.alert('支付失败');
             setTimeout(() => {
               //支付成功 关闭loadding 跳转到支付成功页面
-              tip.loaded();
+              // tip.loaded();
               wepy.navigateTo({
                 url: "/pages/order"
               })
@@ -256,17 +256,17 @@ export default class ComfireOrder extends wepy.page {
           }
         })
       } else {
-        tip.alert('支付失败');
+        // tip.alert('支付失败'); 
         setTimeout(() => {
           //支付成功 关闭loadding 跳转到支付成功页面
-          tip.loaded();
+          // tip.loaded();
           wepy.navigateTo({
             url: "/pages/order"
           })
         }, 2000)
       }
     } else {
-      tip.error(json.data.msg)
+      // tip.error(json.data.msg)
     }
 
   }
@@ -288,7 +288,7 @@ export default class ComfireOrder extends wepy.page {
       this.actualPrice = this.totalPrice - this.reduce_fee;
       this.operating = false;
     } else {
-      tip.error(json.data.msg)
+      // tip.error(json.data.msg)
     }
     this.$apply();
   }
@@ -310,7 +310,7 @@ export default class ComfireOrder extends wepy.page {
       this.actualPrice = this.totalPrice - this.reduce_fee;
       this.operating = false;
     } else {
-      tip.error(json.data.msg)
+      // tip.error(json.data.msg)
     }
     this.$apply();
   }
@@ -339,7 +339,7 @@ export default class ComfireOrder extends wepy.page {
       }
       this.list = retList;
     } else {
-      tip.error(json.data.msg)
+      // tip.error(json.data.msg)
     }
     this.$apply();
   }
@@ -355,7 +355,7 @@ export default class ComfireOrder extends wepy.page {
     async goPay(e) {
       var fId = e.detail.formId;
       if (!this.is_exit_address) {
-        await tip.confirm('你未设置收货地址，请设置地址');
+        // await tip.confirm('你未设置收货地址，请设置地址');
         wepy.navigateTo({
           url: "/pages/address?type=order"
         })

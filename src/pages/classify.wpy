@@ -15,9 +15,9 @@
     </scroll-view>
     <scroll-view class="classify_detail" scroll-y scroll-with-animation="true" style="height:{{windowHeight-50}}px">
         <view class="children">
-          <navigator hover-class="none" class="children_item" wx:for="{{childcateList}}" wx:for-item="item" wx:key="index" url="/pages/search?cateCode={{item.secondCategory.code}}&title={{item.secondCategory.name}}">
-            <image class="child_image" src="{{item.secondCategory.thumLogo}}"></image>
-            <view class="child_name">{{item.secondCategory.name}}</view>
+          <navigator hover-class="none" class="children_item" wx:for="{{childcateList}}" wx:for-item="item" wx:key="index" url="/pages/search?cateCode={{item.code}}&title={{item.name}}">
+            <image class="child_image" src="{{item.thumLogo}}"></image>
+            <view class="child_name">{{item.name}}</view>
           </navigator>
         </view>
     </scroll-view>
@@ -37,9 +37,6 @@ export default class Classify extends wepy.page {
   config = {
     navigationBarTitleText: '分类',
   }
-  components = {
-
-  }
 
   data = {
     scrollTop: 100,
@@ -51,26 +48,13 @@ export default class Classify extends wepy.page {
     childcateList: {}
   }
 
-  async getChildCate(rootCateCode) {
-    const json = await api.childGoodsCatetoryList({
-      query: {
-        rootCategoryCode: rootCateCode
-      }
-    });
-    if (json.data.code == 0) {
-      this.childcateList = json.data.list;
-    } else {
-      tip.error(json.data.msg);
-    }
-    this.$apply();
-  }
-
   async getRootCateTopLevel() {
     const json = await api.rootCtegoryList({
       query: {}
     });
     if (json.data.code == 0) {
       this.rootcateList = json.data.list;
+      this.childcateList = json.data.list[0].secondCategory
       if (this.rootcateList.length > 0) {
         let selCode = wx.getStorageSync(SEL_CLASS_CODE);
         var selRottCateCode = this.rootcateList[0].code;
@@ -84,8 +68,6 @@ export default class Classify extends wepy.page {
             }
           }
         }
-
-        this.getChildCate(selRottCateCode);
       }
     } else {
       tip.error(json.data.msg);
@@ -98,20 +80,16 @@ export default class Classify extends wepy.page {
     let systemInfo = wx.getStorageSync(SYSTEM_INFO);
     this.windowHeight = systemInfo.windowHeight;
     this.$apply();
-
   }
 
   onShow() {
     this.getRootCateTopLevel();
   }
-
-  computed = {
-
-  }
   methods = {
     changeCate(e) {
       let code = e.currentTarget.dataset.code;
-      this.getChildCate(code);
+      var childcateList = this.rootcateList.filter( cat => cat.code == code )[0].secondCategory;
+      this.$apply();
       wepy.setStorageSync(SEL_CLASS_CODE, code);
       //设置一级分类的选中状态
       for (var i = 0; i < this.rootcateList.length; i++) {
@@ -138,9 +116,6 @@ export default class Classify extends wepy.page {
         }
       }
     }
-  }
-  events = {
-
   }
 }
 
