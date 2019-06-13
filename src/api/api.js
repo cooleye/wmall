@@ -61,12 +61,12 @@ const goodsIsFavorite = (params) => wxRequest(params, apiMall + '/api/mall/goods
 //用户相关信息--begin
 //用户的当天签到信息
 const userSginInfo = (params) => wxRequest(params, apiMall + '/api/userSign/signInfo');
-const doSign = (params) => wxRequest(params, apiMall + '/api/userSign/doSign');
+// const doSign = (params) => wxRequest(params, apiMall + '/api/userSign/doSign');
 //获取最近七天签到情况
 const getSignDate = (params) => wxRequest(params, apiMall + '/api/userSign/getSignDate');
 
 //用户积分信息
-const pointInfo = (params) => wxRequest(params, apiMall + '/api/userPoint/pointInfo');
+// const pointInfo = (params) => wxRequest(params, apiMall + '/api/userPoint/pointInfo');
 
 //用户足迹信息
 const browseInfo = (params) => wxRequest(params, apiMall + '/api/userBrowse/browseInfo');
@@ -79,15 +79,15 @@ const delUserBrowser = (params) => wxRequest(params, apiMall + '/api/userBrowse/
 const favoriteInfo = (params) => wxRequest(params, apiMall + '/api/goodsFavorite/favoriteInfo');
 
 //用户消息
-const messageInfo = (params) => wxRequest(params, apiMall + '/api/systemMessage/messageInfo');
+// const messageInfo = (params) => wxRequest(params, apiMall + '/api/systemMessage/messageInfo');
 
 //用户手机绑定
-const registerUser = (params) => wxRequest(params, apiMall + '/api/userCenter/register');
+// const registerUser = (params) => wxRequest(params, apiMall + '/api/userCenter/register');
 //发送短信
-const sendRandCode = (params) => wxRequest(params, apiMall + '/api/sms/send');
+// const sendRandCode = (params) => wxRequest(params, apiMall + '/api/sms/send');
 
 //用户是否绑定手机号
-const getUserInfo = (params) => wxRequest(params, apiMall + '/api/userCenter/getUserInfo');
+// const getUserInfo = (params) => wxRequest(params, apiMall + '/api/userCenter/getUserInfo');
 
 //用户收货地址
 const getUserAddress = (params) => wxRequest(params, apiMall + '/api/receiverInfo/list');
@@ -102,11 +102,11 @@ const receiverInfoById = (params) => wxRequest(params, apiMall + '/api/receiverI
 const delUserAddress = (params) => wxRequest(params, apiMall + '/api/receiverInfo/operation');
 
 //查询关键字保存
-const addSearchKeyword = (params) => wxRequest(params, apiMall + '/api/searchkeyword/add');
+// const addSearchKeyword = (params) => wxRequest(params, apiMall + '/api/searchkeyword/add');
 //查询关键字列表
-const searchKeywordList = (params) => wxRequest(params, apiMall + '/api/searchkeyword/list');
+// const searchKeywordList = (params) => wxRequest(params, apiMall + '/api/searchkeyword/list');
 //查询关键字清除
-const clearSearchKeyword = (params) => wxRequest(params, apiMall + '/api/searchkeyword/clear');
+// const clearSearchKeyword = (params) => wxRequest(params, apiMall + '/api/searchkeyword/clear');
 
 //查询我的订单
 const getMyOrderList = (params) => wxRequest(params, apiMall + '/api/mall/goodsOrder/getMyOrderList');
@@ -153,7 +153,7 @@ export default {
     wxJsCode2Session,
     user2session,
     userSginInfo,
-    doSign,
+    // doSign,
     addCart,
     cartList,
     cartCheck,
@@ -162,21 +162,21 @@ export default {
     cartUpdateNum,
     preOrder,
     refundApply,
-    pointInfo,
+    // pointInfo,
     browseInfo,
     addBrowser,
     delUserBrowser,
     favoriteInfo,
-    messageInfo,
-    registerUser,
-    sendRandCode,
-    getUserInfo,
+    // messageInfo,
+    // registerUser,
+    // sendRandCode,
+    // getUserInfo,
     getUserAddress,
     saveAddress,
     receiverInfoById,
-    addSearchKeyword,
-    searchKeywordList,
-    clearSearchKeyword,
+    // addSearchKeyword,
+    // searchKeywordList,
+    // clearSearchKeyword,
     getMyOrderList,
     saveByCart,
     toPay,

@@ -222,6 +222,7 @@ export default class goodsDetail extends wepy.page {
     that.$apply();
     //接收上一个页面传过来的参数
     that.goodsId = option.id;
+    // console.log('good id :',option.id);
     if (option.purchasetype != undefined) {
       this.purchasetype = option.purchasetype;
     }

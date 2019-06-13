@@ -187,9 +187,6 @@ export default class ComfireOrder extends wepy.page {
       this.getAddressInfo(wepy.getStorageSync(ADDRESS_ID))
     }
   }
-  computed = {
-
-  }
 
   async goToPay(formId) {
     //测试调用接口用，可注释
@@ -207,64 +204,58 @@ export default class ComfireOrder extends wepy.page {
     });
 
     if (json.data.code == 0) {
-      //补货直接提交到后台去审核
-      if (this.purchaseType==2) {//补货
-        // tip.success("已提交补货申请!");
-        setTimeout(() => {
-          // tip.loaded();
-          wepy.navigateTo({
-            url: "/pages/reorder"
-          })
-        }, 2000)
-        return;
-      }
       //保存成功了后进行微信支付
-      const pay = await api.toPay({
-        query:{
-          openId: openId,
-          orderNo: json.data.tradeNo
-        }
-      });
-      if (pay.data.code==0) {
-        //以下是微信支付
-        wx.requestPayment({
-          appId: pay.data.appId,
-          timeStamp: pay.data.timeStamp,
-          nonceStr: pay.data.nonceStr,
-          package: pay.data.package,
-          signType: 'MD5',
-          paySign: pay.data.paySign,
-          success: function (res) {
-            console.log('pay', res)
-            setTimeout(() => {
-              //支付成功 关闭loadding 跳转到支付成功页面
-              // tip.loaded();
-              wepy.navigateTo({
-                url: "/pages/pay_success?orderNo="+json.data.tradeNo
-              })
-            }, 2000)
-          },
-          fail: function (res) {
-            // tip.alert('支付失败');
-            setTimeout(() => {
-              //支付成功 关闭loadding 跳转到支付成功页面
-              // tip.loaded();
-              wepy.navigateTo({
-                url: "/pages/order"
-              })
-            }, 2000)
-          }
+      // const pay = await api.toPay({
+      //   query:{
+      //     openId: openId,
+      //     orderNo: json.data.tradeNo
+      //   }
+      // });
+
+       wepy.navigateTo({
+          url: "/pages/pay_success?orderNo=123"
         })
-      } else {
-        // tip.alert('支付失败'); 
-        setTimeout(() => {
-          //支付成功 关闭loadding 跳转到支付成功页面
-          // tip.loaded();
-          wepy.navigateTo({
-            url: "/pages/order"
-          })
-        }, 2000)
-      }
+
+      // if (pay.data.code==0) {
+      //   //以下是微信支付
+      //   wx.requestPayment({
+      //     appId: pay.data.appId,
+      //     timeStamp: pay.data.timeStamp,
+      //     nonceStr: pay.data.nonceStr,
+      //     package: pay.data.package,
+      //     signType: 'MD5',
+      //     paySign: pay.data.paySign,
+      //     success: function (res) {
+      //       console.log('pay', res)
+      //       setTimeout(() => {
+      //         //支付成功 关闭loadding 跳转到支付成功页面
+      //         // tip.loaded();
+      //         wepy.navigateTo({
+      //           url: "/pages/pay_success?orderNo="+json.data.tradeNo
+      //         })
+      //       }, 2000)
+      //     },
+      //     fail: function (res) {
+      //       // tip.alert('支付失败');
+      //       setTimeout(() => {
+      //         //支付成功 关闭loadding 跳转到支付成功页面
+      //         // tip.loaded();
+      //         wepy.navigateTo({
+      //           url: "/pages/order"
+      //         })
+      //       }, 2000)
+      //     }
+      //   })
+      // } else {
+      //   // tip.alert('支付失败'); 
+      //   setTimeout(() => {
+      //     //支付成功 关闭loadding 跳转到支付成功页面
+      //     // tip.loaded();
+      //     wepy.navigateTo({
+      //       url: "/pages/order"
+      //     })
+      //   }, 2000)
+      // }
     } else {
       // tip.error(json.data.msg)
     }
