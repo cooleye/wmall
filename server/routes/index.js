@@ -14,6 +14,7 @@ var Cart = require('../Model/Cart');
 var HotGoods = require('../Model/HotGoods');
 var Category = require('../Model/Category');
 var Cate = require('../Model/Cate');
+var Order = require('../Model/Order');
 
 /* GET home page. */
 router.get('/', function(req, res) {
@@ -62,45 +63,36 @@ router.get('/api/mall/discoverList', function(req, res) {
 //一级分类
 router.get('/api/mall/rootCtegoryList', function(req, res) {
 
-        Cate.find(function(err, result) {
-            if (err) {
-                res.send({ "msg": "invoke error...", "code": -200, "Success": true })
-            } else {
+    Cate.find(function(err, result) {
+        if (err) {
+            res.send({ "msg": "invoke error...", "code": -200, "Success": true })
+        } else {
 
-                res.send({ "reason": "", "code": "0", "list": result })
-            }
-        })
+            res.send({ "reason": "", "code": "0", "list": result })
+        }
     })
-    //二级三级分类
-router.get('/api/mall/childGoodsCatetoryList', function(req, res) {
-    res.send({ "msg": "", "code": "0", "list": [{ "secondCategory": { "code": "004009", "name": "风衣", "thumLogo": "http://sujiefs.com/upload/images/20171006/201710061145211681060_thumbnail.jpg" }, "thirdCategoryList": [] }, { "secondCategory": { "code": "004003", "name": "T恤", "thumLogo": "http://sujiefs.com/upload/images/20170816/201708161803198792334_thumbnail.jpg" }, "thirdCategoryList": [] }, { "secondCategory": { "code": "004007", "name": "衬衫", "thumLogo": "http://sujiefs.com/upload/images/20170816/201708161804083693788_thumbnail.jpg" }, "thirdCategoryList": [] }, { "secondCategory": { "code": "004010", "name": "针织衫", "thumLogo": "http://sujiefs.com/upload/images/20170819/201708192132126698260_thumbnail.jpg" }, "thirdCategoryList": [] }] })
 })
 
+
 //用户的购物车商品列表
-router.get('/api/mall/goodsCart/list', function(req, res) {
+router.get('/api/mall/goodsCart/list', async function(req, res) {
 
     var openid = req.query.openId;
     let sign = req.query.sign;
     let TIMESTAMP = req.query.time;
     const SIGN = md5((TIMESTAMP + API_SECRET_KEY).toLowerCase())
 
-    Cart.find({}, function(err, result) {
-        if (err) {
-            res.send({ "msg": "invoke error...", "code": -200, "Success": true })
-        } else {
-            // res.send(result)
-            // res.send({ "reason": "hello", "code": "0", "list": result })
-            res.send({ "msg": "success", "code": "0", "totalPrice": 16, "list": result });
-
+    try {
+        var cartList = await Cart.find();
+        var totalPrice = 0;
+        for (let i = 0; i < cartList.length; i++) {
+            totalPrice += cartList[i].priceSubtotal;
         }
-    })
+        res.send({ "msg": "success", "code": "0", "totalPrice": totalPrice, "list": cartList });
 
-
-})
-
-//用户是否绑定手机号
-router.get('/api/userCenter/getUserInfo', function(req, res) {
-    res.send({ "code": 0, "user": null });
+    } catch (error) {
+        res.send({ "msg": "invoke error...", "code": -200, "Success": true })
+    }
 })
 
 //首页发现商品接口
@@ -179,10 +171,25 @@ router.get('/api/userBrowse/add', function(req, res) {
     })
     //商品是否已收藏
 router.get('/api/mall/goodsFavorite/goodsIsFavorite', function(req, res) {
-        res.send({ "reason": null, "code": -1, "isFavorite": 0 })
+    res.send({ "reason": null, "code": -1, "isFavorite": 0 })
+})
+
+
+async function queryData(Collection, condition) {
+    return new Promise(function(resolve, reject) {
+        Collection.find(condition, function(err, result) {
+            if (err) {
+                reject({ "msg": "invoke error...", "code": -200, "Success": true })
+            } else {
+                resolve(result)
+            }
+
+        })
     })
-    //商品加入购物车
-router.get('/api/mall/goodsCart/add', function(req, res) {
+}
+
+//商品加入购物车
+router.get('/api/mall/goodsCart/add', async function(req, res) {
 
         var openid = req.query.openId;
         var goodsId = req.query.goodsId;
@@ -192,29 +199,42 @@ router.get('/api/mall/goodsCart/add', function(req, res) {
         var sign = req.query.sign;
         var time = req.query.time;
 
-        var goods = {
-            goodsId: goodsId,
-            goodsName: "food11111",
-            ischecked: true,
-            thumLogo: "http://sujiefs.com/upload/images/20180319/201803191442069389248.jpg",
-            goodsSkuValName: "goodsSkuValName",
-            type: 1,
-            price: 8,
-            num: 2,
-            priceSubtotal: 16
-        }
+        try {
+            var good = await HotGoods.find({ id: goodsId })
+            good = good[0];
+            var priceSubtotal = (num - 0) * (good.price - 0);
 
-        res.send({ "result": "002", "msg": "Token验证错误", "code": 0 })
+            var cart = new Cart({
+                goodsId: goodsId,
+                goodsName: good.name,
+                ischecked: true,
+                thumLogo: good.logo,
+                goodsSkuValName: goodsSkuId,
+                type: purchaseType,
+                price: good.price,
+                num: num,
+                priceSubtotal: priceSubtotal
+            })
+
+            try {
+                var result = await cart.save();
+                console.log('加入购物车成功', result)
+                res.send({ "result": result, "msg": "加入购物车成功", "code": 0 })
+            } catch (error) {
+                console.log('加入购物车失败', error)
+                res.send({ "result": "002", "msg": error, "code": -1 })
+            }
+
+        } catch (error) {
+            console.log('查询失败：', error)
+            res.send({ "result": "002", "msg": error, "code": -1 })
+        }
     })
     //商品收藏
 router.get('/api/mall/goodsFavorite/add', function(req, res) {
     res.send({ "result": "005", "code": -1 })
 })
 
-//查询我的订单
-router.get('/api/mall/goodsOrder/getMyOrderList', function(req, res) {
-    res.send({ "result": "005", "reason": null, "code": 0, "page_total": 0, "pageSize": 10, "list": [], "totalCount": 0, "pageNum": 1 })
-})
 
 //获取openid
 router.get('/api/wechat/jscode2session', function(req, res) {
@@ -264,9 +284,6 @@ router.get('/api/mall/goodsOrder/commitData', function(req, res) {
         if (err) {
             res.send({ "msg": "invoke error...", "code": -200, "Success": true })
         } else {
-            // res.send(result)
-            // res.send({ "reason": "hello", "code": "0", "list": result })
-            // res.send({ "msg": "success", "code": "0", "totalPrice": 16, "list": result });
             res.send({
                 goodsList: result,
                 totalPrice: 999,
@@ -332,9 +349,17 @@ router.get('/api/mall/goodsOrder/saveByCart', function(req, res) {
 })
 
 //查询订单数量
-router.get('/api/mall/goodsOrder/getMyOrderSize', function(req, res) {
+// router.get('/api/mall/goodsOrder/getMyOrderSize', function(req, res) {
 
-    res.send({ code: 0, msg: 'success', pendingPayCount: 0, backrdersCount: 0, shippedCount: 0 })
+//     res.send({ code: 0, msg: 'success', pendingPayCount: 0, backrdersCount: 0, shippedCount: 0 })
 
-})
+// })
+
+//根据订单号查询详情
+// router.get('/api/mall/goodsOrder/getPayOrderDetail', function(err, res) {
+
+//     console.log('-------------------getPayOrderDetail-------------------------')
+//     res.send({ order: { totalFee: 100 }, code: 0, msg: "支付成功" })
+
+// })
 module.exports = router;
