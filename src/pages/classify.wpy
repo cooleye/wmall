@@ -1,5 +1,6 @@
 <template>
-  <view class="top_search">
+ <view>
+    <view class="top_search">
     <view class="search_read_only">
       <navigator class="search_content" url="/pages/search">
         <i class="iconfont icon-search"></i>
@@ -15,13 +16,14 @@
     </scroll-view>
     <scroll-view class="classify_detail" scroll-y scroll-with-animation="true" style="height:{{windowHeight-50}}px">
         <view class="children">
-          <navigator hover-class="none" class="children_item" wx:for="{{childcateList}}" wx:for-item="item" wx:key="index" url="/pages/search?cateCode={{item.code}}&title={{item.name}}">
+          <navigator hover-class="none" class="children_item" wx:for="{{childcateList}}" wx:for-item="item" wx:key="index" url="/pages/home_detail">
             <image class="child_image" src="{{item.thumLogo}}"></image>
             <view class="child_name">{{item.name}}</view>
           </navigator>
         </view>
     </scroll-view>
   </view>
+ </view>
 </template>
 <script>
 import wepy from 'wepy';

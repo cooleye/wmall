@@ -35,7 +35,7 @@ export default class Authorize extends wepy.page {
 
         if (res.code) {
           let systemInfo = wepy.getSystemInfoSync();
-          // wepy.setStorageSync(SYSTEM_INFO, systemInfo);
+          wepy.setStorageSync(SYSTEM_INFO, systemInfo);
           let rlt = await api.wxJsCode2Session({
             query: {
               jsCode: res.code,
@@ -92,12 +92,7 @@ export default class Authorize extends wepy.page {
       }
     }
   }
-  methods = {
 
-  }
-  events = {
-
-  }
 }
 </script>
 <style lang="less">

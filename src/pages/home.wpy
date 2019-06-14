@@ -156,7 +156,7 @@ export default class Home extends wepy.page {
       }
     },
     alertCallback() {
-      tip.alert('跳转');
+      tip.alert('跳转领红包页面');
     },
     closeAlert() {
      // tip.alert('关闭');

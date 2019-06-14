@@ -1,24 +1,11 @@
 <!--确认订单-->
 <template>
   <view class="comfire_order">
-    <view class="address" @tap="setAddress">
-      <view class="empty_address" wx:if="{{!is_exit_address}}">
-        <view class="title">设置收货地址</view>
-        <view class="arrow">&gt;</view>
-      </view>
-      <view class="address_info" wx:else>
-        <view class="title">
-          <view class="user_info">
-            <text class="name">{{address.receiverName}}</text>
-            <text class="phone">{{address.mobile}}</text>
-          </view>
-          <view class="active_address">
-            <text class="defult" wx:if="{{address.isdefault==1}}"> [默认]</text>
-            {{address.addressDetail}}
-          </view>
-        </view>
-        <view class="arrow">&gt;</view>
-      </view>
+
+    <view class="usre-address">
+      <view>收件人：{{address.name}}</view>
+      <view>电话：{{address.mobile}}</view>
+      <view>地址：{{address.addr}}</view>
     </view>
     <view class="spacing"></view>
 
@@ -105,11 +92,16 @@ export default class ComfireOrder extends wepy.page {
 
     //是否存在默认地址
     is_exit_address: false,
-    address: {},
+    address: {
+      id:"001",
+      name:"张三",
+      mobile:"15811111111",
+      addr:"北京市海淀区北京大学东门"
+    },
     //总价
     totalPrice:0,
     actualPrice : 0,
-    purchaseType : 1,
+    // purchaseType : 1,
     //总积分
     total_jf_num: 0,
     can_use_score:0,
@@ -138,7 +130,7 @@ export default class ComfireOrder extends wepy.page {
       this.totalPrice = data.totalPrice;
       this.actualPrice = data.actualPrice;
       this.is_exit_address = data.hasDefaultAddress;
-      this.address = data.defaultAddress;
+      // this.address = data.defaultAddress;
       this.total_jf_num = data.userScore;
       this.can_use_score = data.canUseScore;
       this.deduScore = data.deduScore;
@@ -178,90 +170,14 @@ export default class ComfireOrder extends wepy.page {
     this.reduce_fee = 0;
     this.operating = false;
     that.goodsId = option.goodsId==undefined?"":option.goodsId;
-    this.purchaseType = option.purchasetype==undefined?"1":option.purchasetype;
-    /*that.list = bb.result.products;
-    console.log(bb.result.products)*/
+    // this.purchaseType = option.purchasetype==undefined?"1":option.purchasetype;
+
     that.getOrderDetailInfo();
     let from = option.from==undefined?"":option.from;
     if (from=="selAdd") {
       this.getAddressInfo(wepy.getStorageSync(ADDRESS_ID))
     }
   }
-
-  async goToPay(formId) {
-    //测试调用接口用，可注释
-    // tip.loading("提交订单中");
-    let userSpecialInfo = wepy.getStorageSync(USER_SPECICAL_INFO) || {};
-    let openId = userSpecialInfo.openid;
-    const json = await api.saveByCart({
-      query: {
-        openId: openId,
-        receiverInfoId: this.address.id,
-        businessMessage: this.sellerMessage,
-        formId: formId,
-        reduceScore: this.jf_num
-      }
-    });
-
-    if (json.data.code == 0) {
-      //保存成功了后进行微信支付
-      // const pay = await api.toPay({
-      //   query:{
-      //     openId: openId,
-      //     orderNo: json.data.tradeNo
-      //   }
-      // });
-
-       wepy.navigateTo({
-          url: "/pages/pay_success?orderNo=123"
-        })
-
-      // if (pay.data.code==0) {
-      //   //以下是微信支付
-      //   wx.requestPayment({
-      //     appId: pay.data.appId,
-      //     timeStamp: pay.data.timeStamp,
-      //     nonceStr: pay.data.nonceStr,
-      //     package: pay.data.package,
-      //     signType: 'MD5',
-      //     paySign: pay.data.paySign,
-      //     success: function (res) {
-      //       console.log('pay', res)
-      //       setTimeout(() => {
-      //         //支付成功 关闭loadding 跳转到支付成功页面
-      //         // tip.loaded();
-      //         wepy.navigateTo({
-      //           url: "/pages/pay_success?orderNo="+json.data.tradeNo
-      //         })
-      //       }, 2000)
-      //     },
-      //     fail: function (res) {
-      //       // tip.alert('支付失败');
-      //       setTimeout(() => {
-      //         //支付成功 关闭loadding 跳转到支付成功页面
-      //         // tip.loaded();
-      //         wepy.navigateTo({
-      //           url: "/pages/order"
-      //         })
-      //       }, 2000)
-      //     }
-      //   })
-      // } else {
-      //   // tip.alert('支付失败'); 
-      //   setTimeout(() => {
-      //     //支付成功 关闭loadding 跳转到支付成功页面
-      //     // tip.loaded();
-      //     wepy.navigateTo({
-      //       url: "/pages/order"
-      //     })
-      //   }, 2000)
-      // }
-    } else {
-      // tip.error(json.data.msg)
-    }
-
-  }
-
   async reduceGoodNum(id, num, index) {
     let userSpecialInfo = wepy.getStorageSync(USER_SPECICAL_INFO) || {};
     let openId = userSpecialInfo.openid;
@@ -337,7 +253,8 @@ export default class ComfireOrder extends wepy.page {
 
   methods = {
     handleDelItem(itemData) {
-      this.deleteGoods(itemData);
+      console.log('删除购物车数据：',itemData)
+      // this.deleteGoods(itemData);
     },
     bindKeyInput(e) {
       this.sellerMessage = e.detail.value;
@@ -345,20 +262,34 @@ export default class ComfireOrder extends wepy.page {
     },
     async goPay(e) {
       var fId = e.detail.formId;
-      if (!this.is_exit_address) {
-        // await tip.confirm('你未设置收货地址，请设置地址');
-        wepy.navigateTo({
-          url: "/pages/address?type=order"
-        })
-        return false;
+
+      //测试调用接口用，可注释
+    // tip.loading("提交订单中");
+    let userSpecialInfo = wepy.getStorageSync(USER_SPECICAL_INFO) || {};
+    let openId = userSpecialInfo.openid;
+    const json = await api.saveByCart({
+      query: {
+        openId: openId,
+        receiverInfoId: this.address.id,
+        businessMessage: this.sellerMessage,
+        formId: fId,
+        reduceScore: this.jf_num
       }
-      this.goToPay(fId);
+    });
+
+    if (json.data.code == 0) {
+   
+   //保存成功了后进行微信支付
+       wepy.navigateTo({
+          url: "/pages/pay_success?orderNo=123"
+        })
+
+    } else {
+      // tip.error(json.data.msg)
+    }
     },
-    setAddress() {
-      wepy.navigateTo({
-        url: "/pages/address?type=order"
-      })
-    },
+
+
     jianBtnTap(e) {
       if (this.operating) {
         return;
@@ -374,10 +305,6 @@ export default class ComfireOrder extends wepy.page {
         return;
       }
       // 购物车数据
-      //this.list[index].num = num;
-      //this.totalPrice = this.totalPrice-this.list[index].price;
-      //this.actualPrice = this.totalPrice - this.reduce_fee;
-      //this.$apply();
       this.reduceGoodNum(id, num, index);
     },
     jiaBtnTap(e) {
@@ -391,10 +318,6 @@ export default class ComfireOrder extends wepy.page {
       // 自增
       num ++;
       // 购物车数据
-      /*this.list[index].num = num;
-      this.totalPrice = parseInt(this.totalPrice)+parseInt(this.list[index].price);
-      this.actualPrice = this.totalPrice - this.reduce_fee;
-      this.$apply();*/
       this.addGoodNum(id, num, index);
     },
     jfInput(e) {
@@ -606,5 +529,10 @@ export default class ComfireOrder extends wepy.page {
 .dk-jf {
   text-align: right;
   color: #666;
+}
+
+.usre-address{
+  background: #fff;
+  padding: 10rpx  30rpx;
 }
 </style>

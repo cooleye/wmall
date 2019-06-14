@@ -13,24 +13,11 @@ export default class shopCart extends wepy.page {
   components = {
     shopCart: ShopCart
   }
-  data = {
 
-  }
-
-  onLoad() {
-  }
   onShow() {
     this.$invoke('shopCart', 'getCartListMethod');
   }
-  computed = {
 
-  }
-  methods = {
-
-  }
-  events = {
-
-  }
 }
 
 </script>

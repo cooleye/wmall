@@ -1,10 +1,11 @@
 <template name="cart-goods-list">
-  <view class="goodsList">
+  <view>
+     <view class="goodsList">
     <repeat for="{{list}}" key="index" index="index" item="item">
       <view class="list_box">
         <swipeDelete :swipeData="item" @delItem.user="handleDelItem">
           <view class="goods-info">
-            <icon class="icon_check" type="success" color="{{item.ischecked?'red':'rgb(153,153,153)'}}" @tap.stop="selectTap" data-index="{{index}}" data-id="{{item.id}}" size="20" />
+            <icon class="icon_check" type="success" color="{{item.ischecked?'red':'rgb(153,153,153)'}}" @tap.stop="selectTap" data-index="{{index}}" data-id="{{item._id}}" size="20" />
             <view class="img-box">
               <image src="{{item.thumLogo}}" class="img" />
             </view>
@@ -14,20 +15,19 @@
                   {{item.goodsName}}
                 </navigator>
               </view>
-              <!--  -->
+  
               <view class="lable">
                 <view class="goods-lable">{{item.goodsSkuValName}}</view>
                 <view class="bo-label" wx:if="{{item.type==2}}">补货</view>
               </view>
               <view class="goods-price">¥ {{item.price}}</view>
               <view class="buy-num">
-                <view class="jian-btn {{item.num==1? 'disabled' : ''}}" catchtap="jianBtnTap" data-index="{{index}}" data-id="{{item.id}}">-</view>
+                <view class="jian-btn {{item.num==1? 'disabled' : ''}}" catchtap="jianBtnTap" data-index="{{index}}" data-id="{{item._id}}">-</view>
                 <input type="number" value="{{item.num}}" disabled/>
-                <view class="jia-btn {{item.num==1000? 'disabled' : ''}}" catchtap="jiaBtnTap" data-index="{{index}}" data-id="{{item.id}}">+</view>
+                <view class="jia-btn {{item.num==1000? 'disabled' : ''}}" catchtap="jiaBtnTap" data-index="{{index}}" data-id="{{item._id}}">+</view>
               </view>
             </view>
           </view>
-          <!--   </view> -->
         </swipeDelete>
       </view>
     </repeat>
@@ -50,6 +50,7 @@
       <view class="total" hidden="{{noSelect}}">合计：¥ {{totalPrice}}</view>
     </view>
     <view class="to-pay-btn {{noSelect?'no-select':''}}" hidden="{{!saveHidden}}" bindtap="toPayOrder">去结算</view>
+  </view>
   </view>
 </template>
 
@@ -84,8 +85,6 @@
           openId: openId
         }
       });
-
-      console.log('1111111111car lsit:',json)
  
       if (json.data.code == 0) {
         let data = json.data;
@@ -108,16 +107,18 @@
       that.getCartList();
     
     }
-    computed = {}
+
     async checkGoods(id, index, ischecked) {
       let userSpecialInfo = wepy.getStorageSync(USER_SPECICAL_INFO) || {};
       let openId = userSpecialInfo.openid;
       const json = await api.cartCheck({
         query: {
           openId: openId,
-          id: id
+          id: id,
+          ischecked:!ischecked
         }
       });
+      
       if (json.data.code == 0) {
         // 购物车数据
         this.list[index].ischecked = !ischecked;
@@ -127,7 +128,7 @@
           this.totalPrice -= parseInt(this.list[index].priceSubtotal);
         }
       } else {
-        tip.error(json.data.msg)
+        // tip.error(json.data.msg)
       }
       this.$apply();
     }
@@ -148,7 +149,7 @@
         this.totalPrice = this.totalPrice - this.list[index].price;
         this.operating = false;
       } else {
-        tip.error(json.data.msg)
+        // tip.error(json.data.msg)
       }
       this.$apply();
     }
@@ -162,6 +163,7 @@
           num: num
         }
       });
+
       if (json.data.code == 0) {
         // 购物车数据
         this.list[index].num = num;
@@ -173,20 +175,21 @@
       this.$apply();
     }
     async deleteGoods(itemData) {
-      var id = itemData.id;
+      var id = itemData._id;
       let userSpecialInfo = wepy.getStorageSync(USER_SPECICAL_INFO) || {};
       let openId = userSpecialInfo.openid;
       const json = await api.cartDel({
         query: {
           openId: openId,
-          cartIdList: [id],
+          id: id,
         }
       });
+      console.log(json)
       if (json.data.code == 0) {
         // 购物车数据
         let retList = [];
         for (var i = 0; i < this.list.length; i++) {
-          if (this.list[i].id == id) {
+          if (this.list[i]._id == id) {
             if (this.list[i].ischecked) {
               this.totalPrice -= parseInt(this.list[i].priceSubtotal);
             }
@@ -209,6 +212,7 @@
       if (!this.allChecked) {//原来未选中
         check = 1;
       }
+      console.log('check:?',check)
       const json = await api.cartCheckAll({
         query: {
           openId: openId,
@@ -225,14 +229,13 @@
         }
         this.allChecked = !this.allChecked;
       } else {
-        tip.error(json.data.msg)
+        // tip.error(json.data.msg)
       }
       this.$apply();
     }
-
-
     methods = {
       handleDelItem(itemData) {
+        console.log(itemData)
         this.deleteGoods(itemData);
       },
       selectTap(e) {

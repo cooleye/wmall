@@ -4,6 +4,7 @@ var mongoose = require('mongoose');
 var DB_URL = 'mongodb://localhost:27017/wmall';
 
 mongoose.connect(DB_URL);
+mongoose.set('useFindAndModify', false);
 
 mongoose.connection.on('connected', function() {
     console.log('数据库连接成功...')
