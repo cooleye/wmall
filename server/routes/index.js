@@ -275,8 +275,6 @@ router.get('/api/mall/goodsOrder/saveByCart', async function(req, res) {
     } catch (error) {
         res.send({ msg: error, code: 0, })
     }
-
-
 })
 
 module.exports = router;

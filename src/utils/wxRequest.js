@@ -3,8 +3,8 @@ import util from './util';
 import md5 from './md5';
 import tip from './tip'
 
-const API_SECRET_KEY = 'www.mall.cycle.com'
-    // const API_SECRET_KEY = 'github.com/cooleye'
+// const API_SECRET_KEY = 'www.mall.cycle.com'
+const API_SECRET_KEY = 'github.com/cooleye'
 const TIMESTAMP = util.getCurrentTime()
 const SIGN = md5.hex_md5((TIMESTAMP + API_SECRET_KEY).toLowerCase())
 

@@ -71,9 +71,6 @@ export default class HomeDetail extends wepy.page {
     this.currentPage = 1;
     //总页数
     this.page_total = 0;
-    console.log("id==="+this.catCode);
-    //this.list = bb.result.products;
-    //this.$apply();
     this.getGoodList();
   }
 

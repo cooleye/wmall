@@ -53,8 +53,8 @@
           <i class="iconfont icon-collection"></i>
           <view class="doc">收藏</view>
         </view>
-        <view class="sy-bottom {{canOrder?'btn_cart':'cart_color'}}" @tap="takeCart">加入购物车</view>
-        <view class="sy-bottom {{canOrder?'btn_order':'order_color'}}" @tap="takeOrder">{{purchaseText}}</view>
+        <view class="sy-bottom btn_cart" @tap="takeCart">加入购物车</view>
+        <view class="sy-bottom btn_order" @tap="takeOrder">{{purchaseText}}</view>
       </view>
     </view>
 
@@ -132,16 +132,16 @@ export default class goodsDetail extends wepy.page {
     isFavorite: false,
     isValidDate: true,
     canOrder: true, //是否能下单
-    purchasetype: 1, //1-正常购买;2-补货
+    // purchasetype: 1, //1-正常购买;2-补货
     purchaseText: "立即购买",
-    special: 0, ////0-正常入库;1-特价专区和换货专区,
+    // special: 0, ////0-正常入库;1-特价专区和换货专区,
    
   }
 
   onLoad(option) {
     let that = this;
     this.orderNum = 1;
-    this.purchasetype = 1;
+    // this.purchasetype = 1;
     this.isFavorite = false;
     this.isValidDate = true;
     this.canOrder = true;
@@ -151,20 +151,17 @@ export default class goodsDetail extends wepy.page {
     that.$apply();
     //接收上一个页面传过来的参数
     that.goodsId = option.id;
-    // console.log('good id :',option.id);
-    if (option.purchasetype != undefined) {
-      this.purchasetype = option.purchasetype;
-    }
-    if (this.purchasetype == 2) {
-      this.purchaseText = "申请补货";
-    } else {
-      this.purchaseText = "立即购买";
-    }
-    if (option.special != undefined) {
-      this.special = option.special;
-    }
+
+    // if (this.purchasetype == 2) {
+    //   this.purchaseText = "申请补货";
+    // } else {
+    //   this.purchaseText = "立即购买";
+    // }
+    // if (option.special != undefined) {
+    //   this.special = option.special;
+    // }
     that.getGoodsDetail();
-    console.log("special===" + this.special);
+    // console.log("special===" + this.special);
   }
   onShow() {
     //创建动画
@@ -206,9 +203,9 @@ export default class goodsDetail extends wepy.page {
       time.startTime = that.detail.startTime;
       if (json.data.validDate == "0") {
         that.isValidDate = false;
-        if (this.purchasetype == 1 && this.special != 1) {
-          this.canOrder = false;
-        }
+        // if (this.purchasetype == 1 && this.special != 1) {
+        //   this.canOrder = false;
+        // }
       }
     } else {
       if (json.data.msg) {
@@ -229,7 +226,7 @@ export default class goodsDetail extends wepy.page {
         openId: openId,
         goodsId: that.goodsId,
         goodsSkuId: this.detail.goodsSkuValIds,
-        purchaseType: this.purchasetype,
+        // purchaseType: this.purchasetype,
         num: this.orderNum
       }
     });
@@ -262,7 +259,7 @@ export default class goodsDetail extends wepy.page {
         openId: openId,
         goodsId: that.goodsId,
         goodsSkuId: this.detail.goodsSkuValIds,
-        purchaseType: this.purchasetype,
+        // purchaseType: this.purchasetype,
         num: this.orderNum
       }
     });
@@ -277,7 +274,7 @@ export default class goodsDetail extends wepy.page {
         this.$apply();
       }, 100)
       wepy.navigateTo({
-        url: "/pages/comfire_order?goodsId=" + that.goodsId + "&purchasetype=" + that.purchasetype
+        url: "/pages/comfire_order?goodsId=" + that.goodsId
       })
     } else {
       if (json.data.msg) {
@@ -324,16 +321,16 @@ export default class goodsDetail extends wepy.page {
       this.orderNum = e.detail.value;
     },
     takeOrder() {
-      if (!this.canOrder) {
-        return;
-      }
+      // if (!this.canOrder) {
+      //   return;
+      // }
       this.showConfirmData();
       this.orderType = 2;
     },
     takeCart() {
-      if (!this.canOrder) {
-        return;
-      }
+      // if (!this.canOrder) {
+      //   return;
+      // }
       this.showConfirmData();
       this.orderType = 1;
     },

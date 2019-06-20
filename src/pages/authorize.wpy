@@ -57,6 +57,7 @@ export default class Authorize extends wepy.page {
     }
   }
   async onGotUserInfo(e) {
+
     if (e.detail.errMsg == 'getUserInfo:ok') {
       let res = await wepy.login();
       if (res.code) {
